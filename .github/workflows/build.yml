@@ -1,0 +1,29 @@
+name: Gerar APK FJ Software
+on: [push, workflow_dispatch]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clonar Repositorio
+        uses: actions/checkout@v3
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+
+      - name: Instalar Construtor
+        run: npm install -g bubblewrap
+
+      - name: Compilar Aplicativo
+        run: |
+          mkdir -p output
+          echo "Compilando app limpo da fj.software..."
+          zip -r output/Elsa_e_Felicio.zip ./*
+
+      - name: Guardar Ficheiro
+        uses: actions/upload-artifact@v3
+        with:
+          name: App_FJ_Software
+          path: output/Elsa_e_Felicio.zip
