@@ -1,0 +1,33 @@
+name: Build APK Limpo e Sem Anuncios
+on: [push, workflow_dispatch]
+
+jobs:
+  android-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Baixar Codigo do Repositorio
+        uses: actions/checkout@v3
+
+      - name: Configurar Java JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: '11'
+
+      - name: Instalar o Cordova globalmente
+        run: npm install -g cordova
+
+      - name: Criar Projeto e Compilar o APK Puro
+        run: |
+          cordova create meu_app com.fjsoftware.love "Elsa e Felicio"
+          cd meu_app
+          cordova platform add android
+          rm -rf www/*
+          cp -r ../* www/ || true
+          cordova build android --release
+
+      - name: Upload do APK Final como Artefato
+        uses: actions/upload-artifact@v3
+        with:
+          name: Elsa_e_Felicio_Limpo
+          path: meu_app/platforms/android/app/build/outputs/apk/release/app-release-unsigned.apk
